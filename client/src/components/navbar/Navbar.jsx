@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   AppBar,
   Toolbar,
@@ -13,13 +13,21 @@ import {
 } from "@material-ui/core";
 import { makeStyles, useTheme, alpha } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import Avatar from '@mui/material/Avatar';
+import Stack from '@mui/material/Stack';
+
+
+
 
 // IMPORTING ICONS
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@material-ui/icons/Menu";
 import HomeIcon from "@material-ui/icons/Home";
-import ExploreIcon from "@material-ui/icons/Explore";
+// import ExploreIcon from "@material-ui/icons/Explore";
 import BrushIcon from "@material-ui/icons/Brush";
 import FiberNewIcon from "@material-ui/icons/FiberNew";
 import SearchIcon from "@material-ui/icons/Search";
@@ -27,6 +35,9 @@ import InputBase from "@material-ui/core/InputBase";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Drawer from "@material-ui/core/Drawer";
+import { AuthContext } from "../../Context/Authcontext";
+import axios from "axios";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -132,6 +143,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function ButtonAppBar() {
+  const { user } = useContext(AuthContext);
+
   const classes = useStyles();
   const [value, setValue] = React.useState();
   const theme = useTheme();
@@ -143,6 +156,15 @@ export default function ButtonAppBar() {
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+  const handleLogout = async () => {
+    console.log(document.cookie);
+
+    const result = await axios.get("http://localhost:8080/api/auth/logout",{withCredentials:true}).catch(Err => console.log(Err));
+    if(result.data.success){
+      sessionStorage.removeItem("user");
+      window.location.reload();
+    }
   };
   const drawerWidth = "50%";
   const drawer = (
@@ -172,40 +194,83 @@ export default function ButtonAppBar() {
               <ListItemText primary="Home" />
             </ListItem>
           </Link>
-          <ListItem button key="Explore">
+          {/* <ListItem button key="Explore">
             <ListItemIcon style={{ color: "#22577A" }}>
               <ExploreIcon />
             </ListItemIcon>
             <ListItemText primary="Explore" />
-          </ListItem>
+          </ListItem> */}
           <ListItem button key="Designs">
             <ListItemIcon style={{ color: "#22577A" }}>
               <BrushIcon />
             </ListItemIcon>
             <ListItemText primary="Designs" />
           </ListItem>
+          <Link to="/WhatsNew" style={{ textDecoration: "none", color: "black" }}>
           <ListItem button key="What'sNew">
             <ListItemIcon style={{ color: "#22577A" }}>
               <FiberNewIcon />
             </ListItemIcon>
             <ListItemText primary="What'sNew" />
           </ListItem>
-          <Link to="/Signin" style={{ textDecoration: "none", color: "black" }}>
-            <ListItem button key="SignIn">
-              <ListItemIcon style={{ color: "#22577A" }}>
-                <LoginIcon />
-              </ListItemIcon>
-              <ListItemText primary="SignIn" />
-            </ListItem>
           </Link>
-          <Link to="/Signup" style={{ textDecoration: "none", color: "black" }}>
-            <ListItem button key="SignUp">
-              <ListItemIcon style={{ color: "#22577A" }}>
-                <AccountBoxIcon />
-              </ListItemIcon>
-              <ListItemText primary="SignUp" />
-            </ListItem>
-          </Link>
+          {user ? (
+            <>
+              <Link
+                to="/Profile"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <ListItem button key="Profile">
+                  <ListItemIcon style={{ color: "#22577A" }}>
+                    <AccountCircleIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Profile" />
+                </ListItem>
+              </Link>
+              <Link
+                to="/upload"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <ListItem button key="Upload">
+                  <ListItemIcon style={{ color: "#22577A" }}>
+                  <CloudUploadIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Upload" />
+                </ListItem>
+              </Link>
+                <ListItem button key="Signout">
+                  <ListItemIcon style={{ color: "#22577A" }}>
+                    <LogoutIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Logout" onClick={handleLogout} />
+                </ListItem>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/Signin"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <ListItem button key="SignIn">
+                  <ListItemIcon style={{ color: "#22577A" }}>
+                    <LoginIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="SignIn" />
+                </ListItem>
+              </Link>
+              <Link
+                to="/Signup"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <ListItem button key="SignUp">
+                  <ListItemIcon style={{ color: "#22577A" }}>
+                    <AccountBoxIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="SignUp" />
+                </ListItem>
+              </Link>
+            </>
+          )}
 
           {/* {["Home", "Explore ", "Designs", "WhatsNew", "SignIn", "SignUp"].map(
             (text, index) => (
@@ -288,7 +353,7 @@ export default function ButtonAppBar() {
                   <Tab label="Home" className={classes.tab} />
                 </Link>
 
-                <Tab label="Explore" className={classes.tab} />
+                {/* <Tab label="Explore" className={classes.tab} /> */}
 
                 <Tab label="Designs" className={classes.tab} />
                 <Link to="/WhatsNew" style={{ textDecoration: "none" }}>
@@ -308,23 +373,47 @@ export default function ButtonAppBar() {
                   inputProps={{ "aria-label": "search" }}
                 />
               </div>
-              <div className={classes.auth}>
-                <Link to="/Signin" style={{ textDecoration: "none" }}>
-                  <Button className={classes.tab} color="primary" variant="">
-                    Sign In
-                  </Button>
-                </Link>
-                <Link to="/Signup" style={{ textDecoration: "none" }}>
-                  <Button
-                    style={{ color: "#B1FFFD" }}
+              {user ? (
+                <div className={classes.auth}>
+                    <Stack direction="row" spacing={0.5}>
+                      <Link to="/Profile" >
+                        <Avatar style={{ marginLeft:"15px" }} src={user.profileImgUrl}></Avatar>
+                      </Link>
+                      <Link to="/upload" style={{ textDecoration: "none" }}>
+                        <Button  style={{ color: "#ff66a0" }} className={classes.tab} color="primary" variant="">
+                          Upload
+                        </Button>
+                      </Link>
+                      <Button
+                    style={{ display: "inline-block" }}
+                    onClick={handleLogout}
                     className={classes.tab}
                     color="primary"
                     variant=""
                   >
-                    Sign Up
+                    Logout
                   </Button>
-                </Link>
-              </div>
+                    </Stack>
+                </div>
+              ) : (
+                <div className={classes.auth}>
+                  <Link to="/Signin" style={{ textDecoration: "none" }}>
+                    <Button className={classes.tab} color="primary" variant="">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link to="/Signup" style={{ textDecoration: "none" }}>
+                    <Button
+                      style={{ color: "#ff66a0" }}
+                      className={classes.tab}
+                      color="primary"
+                      variant=""
+                    >
+                      Sign Up
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </>
           )}
         </Toolbar>

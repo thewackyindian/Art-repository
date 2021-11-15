@@ -6,7 +6,9 @@ const { appendFile } = require("fs");
 
 const saltRounds = 12;
 
-router.post("/login", (req, res) => {
+router.post("/login",async (req, res) => {
+  const query = util.promisify(mysqlConnection.query).bind(mysqlConnection);
+
   const username = req.body.username;
   const password = req.body.password;
 
@@ -102,10 +104,8 @@ router.post("/signup", (req, res) => {
 });
 
 router.get("/logout", (req, res) => {
-  res.clearCookie("Auth");
-  res.clearCookie("username");
+  req.session.destroy();
   res
-    .sendStatus(200)
     .json({ success: true, message: "User logged out successfully" });
 });
 

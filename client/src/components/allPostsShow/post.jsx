@@ -5,13 +5,13 @@ import CardActions from "@material-ui/core/CardActions";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import ShareIcon from "@material-ui/icons/Share";
 import IconButton from "@material-ui/core/IconButton";
-import Button from "@material-ui/core/Button";
 import Avatar from "@material-ui/core/Avatar";
 import { makeStyles } from "@material-ui/core/styles";
-import { blue, red } from "@material-ui/core/colors";
 import "./post.scss";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import {Link} from "react-router-dom";
+import { Typography } from "@material-ui/core";
+import ReactTimeAgo from "react-time-ago";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,8 +24,6 @@ const useStyles = makeStyles((theme) => ({
   small: {
     width: theme.spacing(2.5),
     height: theme.spacing(2.5),
-    color: blue[100],
-    backgroundColor: red[500],
   },
   left: {
     justifyContent: "space-evenly",
@@ -42,18 +40,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 function Post(props) {
   const classes = useStyles();
-  var title = props.title.substr(0, 7);
+  var title = props.title.substr(0, 20);
   title += "...";
-  console.log(title);
-
+  console.log(props.where);
   return (
     <Grid item xs={12} sm={6} md={4} lg={3} className="post">
       <Card className={classes.noshadow} id={props.id}>
-      <Link to="/Post" style={{ textDecoration: "none" }}>
+      <Link to={`/Post/${props.id}`} style={{ textDecoration: "none" }}>
         <div className="container">
           <img
             className="image skeleton"
-            src="https://cdn.dribbble.com/users/1150809/screenshots/16485499/media/02e55b3a0d537c1335c05400518d5e45.jpg"
+            src={props.imgSrc}
             alt="post_img"
           />
           <div className="middle">
@@ -63,7 +60,22 @@ function Post(props) {
                 style={{ color: "white", fontSize: "20px", marginLeft: "10px" }}
               >
                 {title}
-              </span>
+                </span>
+                {props.where === "whatsnew" ? (<>
+                <div style={{ display: "inline-block" }}>
+                  <ReactTimeAgo
+                    date={props.time}
+                    locale="en-US"
+                    style={{
+                      fontSize: "small",
+                      margin: "0",
+                      fontFamily: "Verdana",
+                    }}
+                  />
+                </div>
+                </>) :
+                  (<></>)
+                }
               <ButtonGroup className="left" size="medium">
                 <div></div>
                 <IconButton
@@ -87,24 +99,21 @@ function Post(props) {
         </Link>
 
         <CardActions className={classes.left}>
-          <Avatar color="primary" className={classes.small}>
-            {props.title[0]}
-          </Avatar>
-          <Button
+          <Avatar className={classes.small} src="" />
+          <Typography
             size="small"
-            color="primary"
-            fontSize="small"
+            variant="h7"
             style={{ marginRight: "auto" }}
           >
-            Username
-          </Button>
+            {props.artist}
+          </Typography>
           <ButtonGroup size="small">
             <IconButton
               aria-label="add to favorites"
               style={{ backgroundColor: "transparent" }}
             >
               <FavoriteIcon fontSize="small" className="favicon" />
-              {20}
+              {props.likes}
             </IconButton>
             <IconButton
               aria-label="share"

@@ -1,47 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import InfoIcon from "@mui/icons-material/Info";
-import Button from "@mui/material/Button";
+import { Button,TextField } from "@material-ui/core";
 import Comment from "../../components/comment/comment.jsx";
 import { IconButton } from "@material-ui/core";
 import ShareIcon from "@mui/icons-material/Share";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+// import { AuthContext } from "../../Context/Authcontext";
+import { useHistory } from "react-router-dom";
+import axios from "axios";
 import './sidebar.scss';
 
-function Sidebar() {
-  const temp = [
-    {
-      url: "https://st2.depositphotos.com/1104517/11965/v/600/depositphotos_119659092-stock-illustration-male-avatar-profile-picture-vector.jpg",
-      name: "daniel",
-      comment: "Nice work",
-    },
-    {
-      url: "https://st2.depositphotos.com/1104517/11965/v/600/depositphotos_119659092-stock-illustration-male-avatar-profile-picture-vector.jpg",
-      name: "daniel",
-      comment: "Nice work",
-    },
-    {
-      url: "https://st2.depositphotos.com/1104517/11965/v/600/depositphotos_119659092-stock-illustration-male-avatar-profile-picture-vector.jpg",
-      name: "daniel",
-      comment: "Nice work",
-    },
-    {
-      url: "https://st2.depositphotos.com/1104517/11965/v/600/depositphotos_119659092-stock-illustration-male-avatar-profile-picture-vector.jpg",
-      name: "daniel",
-      comment: "Nice work",
-    },
-    {
-      url: "https://st2.depositphotos.com/1104517/11965/v/600/depositphotos_119659092-stock-illustration-male-avatar-profile-picture-vector.jpg",
-      name: "daniel",
-      comment: "Nice work",
-    },
-    {
-      url: "https://st2.depositphotos.com/1104517/11965/v/600/depositphotos_119659092-stock-illustration-male-avatar-profile-picture-vector.jpg",
-      name: "daniel",
-      comment: "Nice work",
-    },
-  ];
-
+function Sidebar(props) {
+  const [comment, setComment] = useState(null);
+  // const { user } = useContext(AuthContext);
+  let history = useHistory();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if(!comment){
+      alert("Please comment first!");
+      return;
+    }
+    console.log(comment);
+    const res = await axios
+      .post("http://localhost:8080/api/posts/art", comment, {
+        withCredentials: true,
+      })
+      .catch((err) => console.log(err));
+    
+      if(res){
+        if(res.data.success)  history.push("/");
+        else  alert(res.data.message);
+      }
+    console.log(res);
+  };
   return (
     <div>
       <div className="sidebar">
@@ -72,7 +64,7 @@ function Sidebar() {
         </div>
         <br />
         <h2>Feedback</h2>
-        {temp.map((data) => {
+        {props.comment.map((data) => {
           return (
             <Comment
               imgUrl={data.url}
@@ -81,6 +73,21 @@ function Sidebar() {
             />
           );
         })}
+        <form onSubmit={handleSubmit} style={{width:"100%"}}>
+        <TextField
+          fullWidth
+          variant="outlined"
+          label="Write a  Comment"
+          margin="normal"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+        />
+          <Button style={{ backgroundColor: "#22577A", textTransform: "none", color: "white" }}
+            type="submit"
+            variant="outlined" >
+            Comment
+          </Button>
+        </form>
       </div>
     </div>
   );
