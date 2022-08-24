@@ -68,7 +68,7 @@ Following softwares need to be installed in order to setup and run the project l
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/gaur-abhi524/Spacestagram.git
+   git clone [https://github.com/thewackyindian/Art-repository]
    ```
 2. cd over to project directory .
 3. To run the server properly, cd over to server directory.
