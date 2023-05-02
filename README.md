@@ -2,7 +2,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/gaur-abhi524/Art-repository/">
+  <a href="https://github.com/thewackyindian/Designare/">
     <img src="/client/public/favicon.ico" alt="Logo" width="48" height="48">
   </a>
 
@@ -68,7 +68,7 @@ Following softwares need to be installed in order to setup and run the project l
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/thewackyindian/Art-repository
+   git clone https://github.com/thewackyindian/Designare
    ```
 2. cd over to project directory .
 3. To run the server properly, cd over to server directory.
